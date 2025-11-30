@@ -1,0 +1,77 @@
+/* Container */
+.profile-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 50px;
+  font-family: Arial, sans-serif;
+}
+
+/* Card */
+.profile-card {
+  width: 350px;
+  padding: 25px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+/* Labels */
+.profile-card label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+}
+
+/* Inputs */
+.profile-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  margin-bottom: 15px;
+  outline: none;
+  transition: 0.3s;
+}
+
+.profile-input:focus {
+  border-color: #007bff;
+}
+
+/* Success message */
+.profile-success {
+  color: green;
+  font-size: 14px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+/* Buttons */
+.update-btn,
+.logout-btn {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  color: white;
+  cursor: pointer;
+  border-radius: 6px;
+  font-size: 16px;
+  margin-top: 10px;
+  transition: 0.3s;
+}
+
+.update-btn {
+  background: #28a745;
+}
+
+.update-btn:hover {
+  background: #218838;
+}
+
+.logout-btn {
+  background: #dc3545;
+}
+
+.logout-btn:hover {
+  background: #c82333;
+}

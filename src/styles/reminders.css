@@ -1,0 +1,85 @@
+/* Page background */
+.reminder-page {
+  background: #0f1512;
+  min-height: 100vh;
+  padding: 20px;
+  padding-bottom: 100px;
+  color: white;
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+.back-icon {
+  color: #d1d5db;
+  cursor: pointer;
+}
+
+.header-title {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+/* Section Heading */
+.section-heading {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+/* Input Fields */
+.reminder-input {
+  width: 100%;
+  background: #18241f;
+  border: none;
+  padding: 14px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  font-size: 14px;
+  color: #d1d5db;
+}
+
+.reminder-input::placeholder {
+  color: #6b7280;
+}
+
+/* Dropdown Styling */
+.dropdown {
+  width: 100%;
+  background: #18241f;
+  padding: 14px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #d1d5db;
+  cursor: pointer;
+}
+
+.dropdown-icon {
+  color: #9ca3af;
+}
+
+/* Save Button */
+.save-btn {
+  width: 100%;
+  padding: 14px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 10px;
+  background: #22c55e;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.save-btn:hover {
+  background: #16a34a;
+}

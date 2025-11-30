@@ -1,0 +1,102 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+/* Page Background */
+.login-container {
+  min-height: 100vh;
+  background-color: #0F1512;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 25px;
+  color: white;
+}
+
+/* App Name */
+.app-title {
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 25px;
+}
+
+/* Login Card */
+.login-box {
+  background-color: #18241F;
+  padding: 30px;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 380px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.25);
+}
+
+/* Input Fields */
+.input-group {
+  margin-bottom: 18px;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 12px;
+  background-color: #233029;
+  border: none;
+  outline: none;
+  border-radius: 10px;
+  color: white;
+}
+.input-group select {
+  width: 100%;
+  padding: 12px;
+  background-color: #233029;
+  border: none;
+  outline: none;
+  border-radius: 10px;
+  color: white;
+}
+.input-box{
+  width: 100%;
+  padding: 12px;
+  background-color: #233029;
+  border: none;
+  outline: none;
+  border-radius: 10px;
+  color: white;
+}
+/* Login Button */
+.login-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: #22C55E;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  color: black;
+  cursor: pointer;
+}
+
+.login-btn:hover {
+  background-color: #1FAA54;
+}
+
+/* Divider */
+.divider {
+  text-align: center;
+  margin: 12px 0;
+  color: #bbbbbb;
+}
+
+/* Google button wrapper */
+.google-btn-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
