@@ -1,29 +1,14 @@
-// src/pages/ProfilePage.jsx
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import BottomNav from "../components/BottomNav";
-import "../styles/profile.css";   // <-- IMPORT EXTERNAL CSS
+import "../styles/profile.css";
 
 export default function ProfilePage() {
   const navigate = useNavigate();
   const storedUser = JSON.parse(localStorage.getItem("user")) || {};
 
-  const [name, setName] = useState(storedUser.name || "");
-  const [email, setEmail] = useState(storedUser.email || "");
-  const [message, setMessage] = useState("");
-
-  useEffect(() => {
-    if (!storedUser) navigate("/");
-  }, []);
-
-  const handleUpdate = () => {
-    const updatedUser = { name, email };
-    localStorage.setItem("user", JSON.stringify(updatedUser));
-
-    setMessage("Profile updated successfully!");
-    setTimeout(() => setMessage(""), 2000);
-  };
+  const [name, setName] = useState(storedUser.name || "John Doe");
+  const [email, setEmail] = useState(storedUser.email || "john@gmail.com");
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -32,37 +17,29 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="profile-container">
-      <h2>Profile Page</h2>
+    <div className="profile-page">
 
-      <div className="profile-card">
+      <div className="profile-wrapper">
         
-        <label>Name</label>
-        <input
-          className="profile-input"
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
+        {/* Profile Section */}
+        <div className="profile-top">
+          
+          {/* Left big circle */}
+          <div className="profile-avatar"></div>
 
-        <label>Email</label>
-        <input
-          className="profile-input"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-
-        {message && <p className="profile-success">{message}</p>}
-
-        <button className="update-btn" onClick={handleUpdate}>
-          Update Profile
-        </button>
-
-        <button className="logout-btn" onClick={handleLogout}>
-          Logout
-        </button>
+          {/* Right details card */}
+          <div className="profile-info">
+            <p className="profile-text"><strong>Name -</strong> {name}</p>
+            <p className="profile-text"><strong>Email -</strong> {email}</p>
+          </div>
+        </div>
       </div>
+       {/* Logout Button */}
+       <div className="lg-btn">
+        <button className="logout-btn" onClick={handleLogout}>
+          LogOut
+        </button>
+</div>
       <BottomNav />
     </div>
   );

@@ -83,3 +83,37 @@
 .save-btn:hover {
   background: #16a34a;
 }
+.dropdown-container {
+  position: relative;
+  width: 100%;
+}
+
+.dropdown-menu {
+  background: #1b2420;
+  border: 1px solid #2a3530;
+  border-radius: 8px;
+  margin-top: 6px;
+  overflow: hidden;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.dropdown-item {
+  padding: 12px;
+  color: #dfe8e4;
+  border-bottom: 1px solid #252f2b;
+  cursor: pointer;
+}
+
+.dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.dropdown-item:hover {
+  background: #26312d;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
