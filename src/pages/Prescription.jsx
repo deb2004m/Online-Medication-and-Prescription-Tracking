@@ -1,5 +1,6 @@
-import { ArrowLeft, Pill } from "lucide-react";
+import { ArrowLeft, Pill, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import BottomNav from "../components/BottomNav";
 import "../styles/prescriptions.css";
 
@@ -19,13 +20,13 @@ export default function Prescriptions() {
 
   const[showForm, setShowForm] = useState(false);
   const[newMed, setNewMed] = useState({
-    tittle: "",
-    dosage: ""});
+    title: "",
+    subtitle: ""});
 
     const addPrescription = () => {
-        if(!newMed.tittle.trim()) return;
+        if(!newMed.title.trim()) return;
         setActiveList([...activeList, newMed]);
-        setNewMed({ tittle: "", dosage: "" });
+        setNewMed({ title: "", subtitle: "" });
         setShowForm (false);
     };
 

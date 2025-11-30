@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import BottomNav from "../components/BottomNav";
 import "../styles/profile.css";   // <-- IMPORT EXTERNAL CSS
 
 export default function ProfilePage() {
@@ -62,6 +63,7 @@ export default function ProfilePage() {
           Logout
         </button>
       </div>
+      <BottomNav />
     </div>
   );
 }

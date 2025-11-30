@@ -1,5 +1,16 @@
+/* *{
+    background: #0f1512;
+} */
+.profile-page{
+  background-color: #0f1512;
+  min-height: 100vh;
+  padding: 20px;
+  padding-bottom: 100px;
+  color: white;
+}
 /* Container */
 .profile-container {
+    background-color: #0f1512;
   display: flex;
   flex-direction: column;
   align-items: center;
