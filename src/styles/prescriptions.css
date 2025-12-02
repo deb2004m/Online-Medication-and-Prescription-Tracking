@@ -37,6 +37,7 @@
 .prescription-card {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 15px;
   background-color: #18241F;
   padding: 14px;
@@ -137,4 +138,8 @@
   border: none;
   color: white;
   cursor: pointer;
+}
+
+.delete-icon{
+  align-items: end;
 }

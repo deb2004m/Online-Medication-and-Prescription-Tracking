@@ -1,4 +1,4 @@
-import { ArrowLeft, Pill, Plus } from "lucide-react";
+import { ArrowLeft, Pill, Plus, CheckCircle, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import BottomNav from "../components/BottomNav";
@@ -7,28 +7,42 @@ import "../styles/prescriptions.css";
 export default function Prescriptions() {
   const navigate = useNavigate();
 
-  const activePrescriptions = [
+  // Active + Past Prescription States
+  const [activeList, setActiveList] = useState([
     { title: "Antibiotic", subtitle: "Amoxicillin 500mg" },
     { title: "Pain Relief", subtitle: "Ibuprofen 200mg" },
     { title: "Blood Pressure", subtitle: "Lisinopril 10mg" },
-  ];
+  ]);
 
-  const pastPrescriptions = [
+  const [pastList, setPastList] = useState([
     { title: "Diabetes", subtitle: "Metformin 500mg" },
     { title: "Cholesterol", subtitle: "Atorvastatin 20mg" },
-  ];
+  ]);
 
-  const[showForm, setShowForm] = useState(false);
-  const[newMed, setNewMed] = useState({
-    title: "",
-    subtitle: ""});
+  // Add Prescription Form State
+  const [showForm, setShowForm] = useState(false);
+  const [newMed, setNewMed] = useState({ title: "", subtitle: "" });
 
-    const addPrescription = () => {
-        if(!newMed.title.trim()) return;
-        setActiveList([...activeList, newMed]);
-        setNewMed({ title: "", subtitle: "" });
-        setShowForm (false);
-    };
+  // Add new prescription to Active List
+  const addPrescription = () => {
+    if (!newMed.title.trim()) return;
+
+    setActiveList([...activeList, newMed]);
+    setNewMed({ title: "", subtitle: "" });
+    setShowForm(false);
+  };
+
+  // Move item from Active → Past
+  const markAsCompleted = (index) => {
+    const item = activeList[index];
+
+    setPastList([...pastList, item]);     // Add to past
+    setActiveList(activeList.filter((_, i) => i !== index)); // Remove from active
+  };
+
+  const deletePastPrescription = (index) => {
+    setPastList(pastList.filter((_, i) => i !== index));
+  };
 
   return (
     <div className="prescription-page">
@@ -38,11 +52,11 @@ export default function Prescriptions() {
         <h2 className="header-title">Prescriptions</h2>
       </div>
 
-      {/* Active Prescriptions */}
+      {/* ACTIVE PRESCRIPTIONS */}
       <h3 className="section-title">Active Prescriptions</h3>
 
       <div className="card-list">
-        {activePrescriptions.map((item, idx) => (
+        {activeList.map((item, idx) => (
           <div key={idx} className="prescription-card">
             <div className="icon-box">
               <Pill className="icon-green" size={22} />
@@ -52,16 +66,23 @@ export default function Prescriptions() {
               <h4 className="title">{item.title}</h4>
               <p className="subtitle">{item.subtitle}</p>
             </div>
+
+            {/* ✔ Button */}
+            <CheckCircle
+              className="done-icon"
+              size={24}
+              onClick={() => markAsCompleted(idx)}
+            />
           </div>
         ))}
       </div>
 
-      {/* Past Prescriptions */}
+      {/* PAST PRESCRIPTIONS */}
       <h3 className="section-title">Past Prescriptions</h3>
 
       <div className="card-list">
-        {pastPrescriptions.map((item, idx) => (
-          <div key={idx} className="prescription-card">
+        {pastList.map((item, idx) => (
+          <div key={idx} className="prescription-card past-card">
             <div className="icon-box">
               <Pill className="icon-green" size={22} />
             </div>
@@ -70,15 +91,22 @@ export default function Prescriptions() {
               <h4 className="title">{item.title}</h4>
               <p className="subtitle">{item.subtitle}</p>
             </div>
+                        {/* 🗑 Delete icon */}
+            <Trash2
+              className="delete-icon"
+              size={22}
+              onClick={() => deletePastPrescription(idx)}
+            />
           </div>
         ))}
       </div>
-            {/* Floating Add Button */}
+
+      {/* Floating Add Button */}
       <button className="add-btn" onClick={() => setShowForm(true)}>
         <Plus size={26} />
       </button>
 
-         {/* Add Prescription Popup */}
+      {/* Add Prescription Popup */}
       {showForm && (
         <div className="popup-overlay">
           <div className="popup-box">
@@ -112,6 +140,7 @@ export default function Prescriptions() {
           </div>
         </div>
       )}
+
       <BottomNav />
     </div>
   );
