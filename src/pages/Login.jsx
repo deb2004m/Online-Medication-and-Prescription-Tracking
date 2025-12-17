@@ -1,19 +1,27 @@
 // src/pages/LoginPage.jsx
-
+import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { fakeAuth } from "../components/ProtectedRouter";
+import { useContext } from "react";
+import { AuthContext } from "../api/AuthContext";
 import "../styles/Login.css";
 
 export default function LoginPage() {
   const navigate = useNavigate();
+
+  const { login } = useContext(AuthContext);
+
+  //commonfields
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("patient");
+  //doctor fields
   const [license, setLicense] = useState("");
   const [specialization, setSpecialization] = useState("");
   const [error, setError] = useState(null);
+  //Auth Mode
+  const [isSignup, setIsSignup] = useState(false);
 
   // ---------------- GOOGLE LOGIN SETUP ----------------
   useEffect(() => {
@@ -27,7 +35,7 @@ export default function LoginPage() {
       /* global google */
       google.accounts.id.initialize({
         client_id:
-          "YOUR_GOOGLE  CLIENT_ID",
+          "YOUR CLIENT ID.apps.googleusercontent.com",
         callback: handleGoogleResponse,
       });
 
@@ -58,7 +66,7 @@ export default function LoginPage() {
       role: "patient",
     };
 
-    fakeAuth.login(user);
+    login(response.credential);
     navigate("/prescriptions");
   };
 
@@ -74,23 +82,54 @@ export default function LoginPage() {
     );
   }
 
-  // ---------------- NORMAL LOGIN ----------------
-  const handleLogin = () => {
-    if (!email || !password) {
-      alert("Please enter login details");
+
+  // ---------------- NORMAL LOGIN (REAL BACKEND) ----------------
+const handleAuth = async () => {
+  if (!email || !password) {
+    alert("Please enter login details");
+    return;
+  }
+
+  try {
+    if (isSignup) {
+      //Registration
+      await axios.post("http://localhost:8080/api/auth/register", {
+        username: name,
+        email,
+        password,
+        role,
+        ...(role === "doctor" && { license, specialization }),
+      });
+      alert("Registration successful! Please log in.");
+      setIsSignup(false);
       return;
     }
-
-    const user = {
-      name: email.split("@")[0],
+    //Login
+    const res = await axios.post("http://localhost:8080/api/auth/login", {
       email,
-      role,
-      ...(role === "doctor" && { license, specialization })
-    };
+      password,
+    });
+    const { token, role: userRole, email: userEmail, username } = res.data;
 
-    fakeAuth.login(user);
-    navigate("/prescriptions");
-  };
+    login(token);
+
+    // localStorage.setItem("token", token);
+    localStorage.setItem("user", JSON.stringify({ email: userEmail, role: userRole, username }));
+    if (userRole === "admin") {
+      navigate("/admin/dashboard");
+    } else if (userRole === "doctor") {
+      navigate("/doctor/appointments");
+    } else {
+      navigate("/prescriptions");
+    }
+
+  } catch (error) {
+    console.error("Axios error:", error);
+    console.error("Response data:", error.response);
+    alert(error.response?.data || error.message);
+  }
+};
+
 
   return (
     <div className="login-container">
@@ -128,6 +167,7 @@ export default function LoginPage() {
         </div>
 
         {/* ROLE DROPDOWN */}
+      {isSignup && (
         <div className="input-group">
           <label>Role</label>
           <select value={role} onChange={(e) => setRole(e.target.value)}>
@@ -137,9 +177,10 @@ export default function LoginPage() {
             <option value="pharmacist">Pharmacist</option>
           </select>
         </div>
+      )}
 
-                  {/* Doctor Extra Fields */}
-          {role === "doctor" && (
+   {/* Doctor Extra Fields */}
+          {isSignup && role === "doctor" && (
             <>
             <div className="input-group">
               <input
@@ -160,13 +201,20 @@ export default function LoginPage() {
             </>
           )}
 
-        <button className="login-btn" onClick={handleLogin}>
-          Sign Up
+        <button className="login-btn" onClick={handleAuth}>
+          {isSignup ? "Sign Up" : "Log In"}
         </button>
 
         <div className="divider">or</div>
 
         <div id="googleLoginBtn" className="google-btn-container"></div>
+                {/* Toggle */}
+        <p className="toggle-text">
+          {isSignup ? "Already have an account?" : "New user?"}
+          <span onClick={() => setIsSignup(!isSignup)}>
+            {isSignup ? " Login" : " Sign Up"}
+          </span>
+        </p>
       </div>
     </div>
   );

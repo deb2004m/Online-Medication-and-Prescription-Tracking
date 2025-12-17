@@ -50,7 +50,7 @@ export default function Dashboard() {
           <div className="pill-icon">💊</div>
           <div>
             <p className="med-name">Medication A</p>
-            <p className="med-date">2023-01-15</p>
+            <p className="med-date">2025-11-15</p>
           </div>
         </div>
 
@@ -58,7 +58,7 @@ export default function Dashboard() {
           <div className="pill-icon">💊</div>
           <div>
             <p className="med-name">Medication B</p>
-            <p className="med-date">2023-02-20</p>
+            <p className="med-date">2025-10-20</p>
           </div>
         </div>
 
@@ -66,7 +66,7 @@ export default function Dashboard() {
           <div className="pill-icon">💊</div>
           <div>
             <p className="med-name">Medication C</p>
-            <p className="med-date">2023-03-25</p>
+            <p className="med-date">2025-10-25</p>
           </div>
         </div>
       </div>

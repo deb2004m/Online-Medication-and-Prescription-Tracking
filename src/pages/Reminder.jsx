@@ -70,22 +70,29 @@ export default function Reminders() {
         <h2 className="header-title">Medication Tracker</h2>
       </div>
 
-      {/* Saved Notifications Section */}
-      {savedList.length > 0 && (
-        <div className="saved-section">
-          <h3 className="section-heading">Saved Reminders</h3>
-
-          {savedList.map((item, index) => (
-            <div key={index} className="saved-item">
-              <p><strong>{item.medName}</strong> — {item.dosage}</p>
-              <p>Frequency: {item.frequency}</p>
-              <p>Time: {item.time}</p>
-              <p>Date: {item.date}</p>
-              <p>Notification: {item.notif}</p>
-            </div>
-          ))}
+{/* Saved Notifications Section */}
+<h3 className="section-heading">Saved Reminders</h3>
+{savedList.length > 0 && (
+  <div className="saved-section reminder-grid">
+    
+    {savedList.map((item, index) => (
+      <div key={index} className="reminder-card">
+        <div className="reminder-header">
+          <h4 className="med-title">{item.medName}</h4>
+          <span className="dosage">{item.dosage}</span>
         </div>
-      )}
+
+        <div className="reminder-body">
+          <p><strong>Frequency:</strong> {item.frequency}</p>
+          <p><strong>Time:</strong> {item.time}</p>
+          <p><strong>Date:</strong> {item.date}</p>
+          <p><strong>Notification:</strong> {item.notif}</p>
+        </div>
+      </div>
+    ))}
+  </div>
+)}
+
 
       <h3 className="section-heading">Add Medication</h3>
 
