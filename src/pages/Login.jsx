@@ -35,7 +35,7 @@ export default function LoginPage() {
       /* global google */
       google.accounts.id.initialize({
         client_id:
-          "YOUR CLIENT ID.apps.googleusercontent.com",
+        "YOUR GOOGLE_CLIENT_ID_HERE",
         callback: handleGoogleResponse,
       });
 
@@ -114,11 +114,11 @@ const handleAuth = async () => {
     login(token);
 
     // localStorage.setItem("token", token);
-    localStorage.setItem("user", JSON.stringify({ email: userEmail, role: userRole, username }));
+    localStorage.setItem("user", JSON.stringify({ email: userEmail, role: userRole.toLowerCase(), username }));
     if (userRole === "admin") {
       navigate("/admin/dashboard");
     } else if (userRole === "doctor") {
-      navigate("/doctor/appointments");
+      navigate("/doctor/dashboard");
     } else {
       navigate("/prescriptions");
     }

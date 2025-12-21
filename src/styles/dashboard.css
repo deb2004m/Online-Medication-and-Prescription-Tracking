@@ -1,133 +1,284 @@
-.dashboard-container {
-  background: #0F1512;
-  min-height: 100vh;
-  color: white;
-  padding: 20px;
-  padding-bottom: 100px;
-}
+        /* Main Container */
+        .dashboard-container {
+          background: linear-gradient(135deg, #0a0e0c 0%, #0f1512 50%, #121a17 100%);
+          min-height: 100vh;
+          color: white;
+          padding: 20px;
+          padding-bottom: 100px;
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
 
-/* Header */
-.dash-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+        /* Header */
+        .dash-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 24px;
+        }
 
-.back-arrow {
-  font-size: 22px;
-  cursor: pointer;
-}
+        .back-button {
+          background: rgba(46, 204, 113, 0.1);
+          border: 1px solid rgba(46, 204, 113, 0.3);
+          border-radius: 12px;
+          width: 44px;
+          height: 44px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          color: #2ecc71;
+        }
 
-.dash-header h2 {
-  font-size: 20px;
-}
+        .back-button:hover {
+          background: rgba(46, 204, 113, 0.2);
+          transform: translateX(-2px);
+        }
 
-/* Tabs */
-.dash-tabs {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
-  border-bottom: 1px solid #2a2f2c;
-  padding-bottom: 8px;
-}
+        .dash-header h2 {
+          font-size: 24px;
+          font-weight: 600;
+          margin: 0;
+          letter-spacing: -0.5px;
+        }
 
-.tab {
-  background: transparent;
-  border: none;
-  color: #9ba59f;
-  padding: 6px 10px;
-  font-size: 15px;
-}
+        .header-spacer {
+          width: 44px;
+        }
 
-.tab.active {
-  color: white;
-  border-bottom: 2px solid #2ecc71;
-}
+        /* Tabs */
+        .dash-tabs {
+          display: flex;
+          gap: 8px;
+          background: rgba(18, 26, 23, 0.6);
+          padding: 6px;
+          border-radius: 16px;
+          margin-bottom: 28px;
+          border: 1px solid #1f2924;
+        }
 
-/* Section Title */
-.section-title {
-  margin-top: 25px;
-  font-size: 17px;
-  color: #d1d7d4;
-}
+        .tab {
+          flex: 1;
+          background: transparent;
+          border: 1px solid transparent;
+          color: #9ba59f;
+          padding: 10px 16px;
+          border-radius: 12px;
+          font-size: 14px;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.3s ease;
+        }
 
-/* Analytics Card */
-.analytics-card {
-  background: #121a17;
-  border: 1px solid #1f2924;
-  padding: 20px;
-  border-radius: 12px;
-  margin-top: 10px;
-}
+        .tab.active {
+          background: rgba(46, 204, 113, 0.15);
+          border: 1px solid rgba(46, 204, 113, 0.3);
+          color: #2ecc71;
+          font-weight: 600;
+        }
 
-.analytics-card h4 {
-  font-size: 16px;
-  color: #d7dfdc;
-}
+        .tab:hover {
+          background: rgba(46, 204, 113, 0.08);
+        }
 
-.percent {
-  font-size: 40px;
-  margin-top: 5px;
-}
+        /* Section */
+        .section {
+          margin-bottom: 32px;
+        }
 
-.subtext {
-  font-size: 14px;
-  color: #aaa;
-}
+        .section-header {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 16px;
+          color: #2ecc71;
+        }
 
-.green {
-  color: #2ecc71;
-  font-weight: bold;
-}
+        .section-title {
+          font-size: 18px;
+          font-weight: 600;
+          margin-bottom: 25px;
+          color: #e1e7e4;
+        }
 
-/* Chart Placeholder */
-.chart-placeholder {
-  width: 100%;
-  height: 80px;
-  margin-top: 20px;
-  position: relative;
-}
+        /* Analytics Card */
+        .analytics-card {
+          background: linear-gradient(135deg, rgba(18, 26, 23, 0.8) 0%, rgba(15, 21, 18, 0.9) 100%);
+          border: 1px solid #1f2924;
+          padding: 24px;
+          border-radius: 20px;
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
 
-.chart-line {
-  width: 100%;
-  height: 100%;
-  border-bottom: 2px dashed #2ecc71;
-  opacity: 0.4;
-}
+        .card-top {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          margin-bottom: 20px;
+        }
 
-/* Weeks */
-.weeks {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 10px;
-  font-size: 14px;
-}
+        .adherence-info {
+          flex: 1;
+        }
 
-/* Prescription History */
-.prescription-list {
-  margin-top: 15px;
-}
+        .card-subtitle {
+          font-size: 15px;
+          color: #b0b8b4;
+          font-weight: 500;
+          margin: 0 0 8px 0;
+        }
 
-.prescription-item {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  background: #121a17;
-  border: 1px solid #1f2924;
-  padding: 12px;
-  margin-bottom: 12px;
-  border-radius: 10px;
-}
+        .percent {
+          font-size: 48px;
+          font-weight: 700;
+          margin: 0;
+          background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          line-height: 1;
+        }
 
-.pill-icon {
-  font-size: 22px;
-}
+        .badge-success {
+          background: rgba(46, 204, 113, 0.15);
+          border: 1px solid rgba(46, 204, 113, 0.3);
+          border-radius: 12px;
+          padding: 8px 12px;
+          display: flex;
+          align-items: center;
+          gap: 4px;
+        }
 
-.med-name {
-  font-size: 16px;
-}
+        .badge-success span {
+          font-size: 14px;
+          color: #2ecc71;
+          font-weight: 600;
+        }
 
-.med-date {
-  font-size: 13px;
-  color: #9ba59f;
-}
+        .subtext {
+          font-size: 14px;
+          color: #9ba59f;
+          margin: 0 0 24px 0;
+        }
+
+        /* Chart */
+        .chart-container {
+          height: 100px;
+          position: relative;
+          margin-bottom: 12px;
+        }
+
+        .chart-svg {
+          overflow: visible;
+        }
+
+        /* Weeks */
+        .weeks {
+          display: flex;
+          justify-content: space-between;
+          font-size: 13px;
+          color: #7a8580;
+        }
+
+        /* Prescription List */
+        .prescription-list {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+
+        .prescription-item {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          background: linear-gradient(135deg, rgba(18, 26, 23, 0.8) 0%, rgba(15, 21, 18, 0.9) 100%);
+          border: 1px solid #1f2924;
+          padding: 16px;
+          border-radius: 16px;
+          transition: all 0.3s ease;
+          cursor: pointer;
+        }
+
+        .prescription-item:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 24px rgba(46, 204, 113, 0.15);
+          border-color: rgba(46, 204, 113, 0.3);
+        }
+
+        .pill-icon {
+          background: rgba(46, 204, 113, 0.15);
+          border: 1px solid rgba(46, 204, 113, 0.3);
+          border-radius: 12px;
+          width: 48px;
+          height: 48px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #2ecc71;
+          flex-shrink: 0;
+        }
+
+        .med-info {
+          flex: 1;
+        }
+
+        .med-name {
+          font-size: 16px;
+          font-weight: 600;
+          margin: 0 0 4px 0;
+          color: #e1e7e4;
+        }
+
+        .med-date {
+          font-size: 14px;
+          color: #9ba59f;
+          margin: 0;
+        }
+
+        .arrow-icon {
+          color: #7a8580;
+          font-size: 20px;
+          flex-shrink: 0;
+        }
+
+       
+        /* Responsive Design */
+        @media (max-width: 768px) {
+          .dashboard-container {
+            padding: 16px;
+            padding-bottom: 90px;
+          }
+
+          .dash-header h2 {
+            font-size: 20px;
+          }
+
+          .tab {
+            font-size: 13px;
+            padding: 8px 12px;
+          }
+
+          .percent {
+            font-size: 40px;
+          }
+
+          .analytics-card {
+            padding: 20px;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .tab {
+            font-size: 12px;
+            padding: 8px 8px;
+          }
+
+          .card-top {
+            flex-direction: column;
+            gap: 12px;
+          }
+
+          .badge-success {
+            align-self: flex-start;
+          }
+        }

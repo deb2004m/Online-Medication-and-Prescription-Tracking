@@ -1,48 +1,111 @@
 import { ArrowLeft, Pill, Plus, CheckCircle, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import BottomNav from "../components/BottomNav";
 import "../styles/prescriptions.css";
+import axios from "axios";
+import api from "../api/api";
+import { Download } from "lucide-react";
+
 
 export default function Prescriptions() {
   const navigate = useNavigate();
 
   // Active + Past Prescription States
-  const [activeList, setActiveList] = useState([
-    { title: "Antibiotic", subtitle: "Amoxicillin 500mg" },
-    { title: "Pain Relief", subtitle: "Ibuprofen 200mg" },
-    { title: "Blood Pressure", subtitle: "Lisinopril 10mg" },
-  ]);
+const [activeList, setActiveList] = useState([]);
+const [pastList, setPastList] = useState([]);
 
-  const [pastList, setPastList] = useState([
-    { title: "Diabetes", subtitle: "Metformin 500mg" },
-    { title: "Cholesterol", subtitle: "Atorvastatin 20mg" },
-  ]);
 
   // Add Prescription Form State
   const [showForm, setShowForm] = useState(false);
   const [newMed, setNewMed] = useState({ title: "", subtitle: "" });
 
-  // Add new prescription to Active List
-  const addPrescription = () => {
-    if (!newMed.title.trim()) return;
+  useEffect(() => {
+  fetchPrescriptions();
+}, []);
 
-    setActiveList([...activeList, newMed]);
+const fetchPrescriptions = async () => {
+  try {
+    const res = await api.get("/api/patient/prescriptions");
+    // Example: split by status
+    setActiveList(res.data.filter(p => p.status === "ACTIVE"));
+    setPastList(res.data.filter(p => p.status === "COMPLETED"));
+
+  } catch (err) {
+    console.error("Error fetching prescriptions", err);
+  }
+};
+
+  // Add new prescription to Active List
+const addPrescription = async () => {
+  if (!newMed.title.trim()) return;
+
+  try {
+    const payload = {
+      patientId: selectedPatientId, // IMPORTANT
+      name: newMed.title,
+      dosages: newMed.subtitle,
+      duration: "5 days",
+      instruction: "After food"
+    };
+
+    await api.post("/api/doctor/prescription", payload);
+
+    fetchPrescriptions(); // reload list
     setNewMed({ title: "", subtitle: "" });
     setShowForm(false);
-  };
+  } catch (err) {
+    console.error("Error adding prescription", err);
+  }
+};
+
 
   // Move item from Active → Past
-  const markAsCompleted = (index) => {
-    const item = activeList[index];
+  const markAsCompleted = async (prescriptionId) => {
+    try {
+      await api.put(
+        `/api/patient/prescriptions/${prescriptionId}/complete`
+      );
+      fetchPrescriptions();
+    
 
-    setPastList([...pastList, item]);     // Add to past
-    setActiveList(activeList.filter((_, i) => i !== index)); // Remove from active
+    setPastList([...pastList, { ...prescription, status: "COMPLETED"}]);     // Add to past
+    setActiveList(activeList.filter(p => p.prescriptionId !== prescriptionId)); // Remove from active
+  } catch (err) {
+    console.error("Error marking prescription as completed", err);
+  }
+};
+
+  const deletePastPrescription = async (prescriptionId) => {
+    await axios.delete(`http://localhost:8080/prescriptions/${prescriptionId}`);
+    setPastList(pastList.filter((p => p.id !== prescriptionId)));
   };
 
-  const deletePastPrescription = (index) => {
-    setPastList(pastList.filter((_, i) => i !== index));
-  };
+  const downloadPdf = async (id) => {
+  const res = await api.get(
+    `/api/patient/prescriptions/${id}/download/pdf`,
+    { responseType: "blob" }
+  );
+
+  const url = window.URL.createObjectURL(new Blob([res.data]));
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "prescription.pdf";
+  a.click();
+};
+
+// const downloadTxt = async (id) => {
+//   const res = await api.get(
+//     `/api/patient/prescriptions/${id}/download/txt`,
+//     { responseType: "blob" }
+//   );
+
+//   const url = window.URL.createObjectURL(new Blob([res.data]));
+//   const a = document.createElement("a");
+//   a.href = url;
+//   a.download = "prescription.txt";
+//   a.click();
+// };
 
   return (
     <div className="prescription-page">
@@ -56,23 +119,38 @@ export default function Prescriptions() {
       <h3 className="section-title">Active Prescriptions</h3>
 
       <div className="card-list">
-        {activeList.map((item, idx) => (
-          <div key={idx} className="prescription-card">
+        {activeList.map((item) => (
+          <div key={item.prescriptionId} className="prescription-card">
             <div className="icon-box">
               <Pill className="icon-green" size={22} />
             </div>
 
             <div className="text-box">
-              <h4 className="title">{item.title}</h4>
-              <p className="subtitle">{item.subtitle}</p>
+              <h4 className="title">{item.name}</h4>
+              <p className="subtitle">{item.dosages}</p>
+              <p className="subtitle">{item.instruction}</p>
             </div>
+            <div className="action-icons">
+              {/* DOWNLOAD PDF */}
+              <Download
+                size={22}
+                className="download-icon"
+                onClick={() => downloadPdf(item.prescriptionId)}
+              />
 
             {/* ✔ Button */}
+            {item.status === "ACTIVE" && (
             <CheckCircle
               className="done-icon"
               size={24}
-              onClick={() => markAsCompleted(idx)}
+              onClick={() => markAsCompleted(item.prescriptionId)}
             />
+            )}
+            {item.status === "COMPLETED" && (
+              <span className="completed-text">Completed</span>
+            )}
+
+          </div>
           </div>
         ))}
       </div>
@@ -88,9 +166,16 @@ export default function Prescriptions() {
             </div>
 
             <div className="text-box">
-              <h4 className="title">{item.title}</h4>
-              <p className="subtitle">{item.subtitle}</p>
+              <h4 className="title">{item.name}</h4>
+              <p className="subtitle">{item.dosages}</p>
             </div>
+
+            <Download
+              size={22}
+              className="download-icon"
+              onClick={() => downloadPdf(item.prescriptionId)}
+            />
+
                         {/* 🗑 Delete icon */}
             <Trash2
               className="delete-icon"

@@ -8,6 +8,7 @@ import Dashboard from "./pages/Dashboard";
 import Prescriptions from "./pages/Prescription";
 import Reminders from "./pages/Reminder";
 import Profile from "./pages/Profile";
+import DoctorDashboard from "./pages/DoctorDashboard";
 
 export default function App() {
   return (
@@ -16,6 +17,16 @@ export default function App() {
       {/* PUBLIC ROUTE */}
       <Route path="/" element={<LoginPage />} />
 
+
+   {/* DOCTOR */}
+      <Route
+        path="/doctor/dashboard"
+        element={
+          <ProtectedRoute allowedRole="doctor">
+            <DoctorDashboard />
+          </ProtectedRoute>
+        }
+      />
       {/* PROTECTED ROUTES */}
       <Route
         path="/dashboard"

@@ -1,35 +1,60 @@
+import { ArrowLeft, TrendingUp } from "lucide-react";
+import React, { useState } from "react";
+import { Calendar, Pill } from "lucide-react";
 import BottomNav from "../components/BottomNav";
 import "../styles/dashboard.css";
 
 export default function Dashboard() {
+  const [activeTab, setActiveTab] = useState('Patient');
+  const tabs = ['Patient', 'Doctor', 'Pharmacy', 'Admin'];
+  const prescriptions = [
+    { name: 'Medication A', date: '2025-11-15', id: 1 },
+    { name: 'Medication B', date: '2025-10-20', id: 2 },
+    { name: 'Medication C', date: '2025-10-25', id: 3 }
+  ];
   return (
     <div className="dashboard-container">
 
       {/* Header */}
       <div className="dash-header">
-        <span className="back-arrow">←</span>
+        <button className="back-button"><ArrowLeft size={20} /></button>
         <h2>Analytics</h2>
-        <span></span>
+        <div className="header-spacer"></div>
       </div>
 
       {/* Tabs */}
       <div className="dash-tabs">
-        <button className="tab active">Patient</button>
-        <button className="tab">Doctor</button>
-        <button className="tab">Pharmacy</button>
-        <button className="tab">Admin</button>
-      </div>
+          {tabs.map(tab => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`tab ${activeTab === tab ? 'active' : ''}`}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
 
       {/* Adherence Trends */}
-      <h3 className="section-title">Adherence Trends</h3>
+      <div className="section">
+          <div className="section-header">
+            <TrendingUp size={20} />
+            <h3 className="section-title">Adherence Trends</h3>
+      </div>
 
-      <div className="analytics-card">
-        <h4>Medication Adherence</h4>
-        <p className="percent">85%</p>
-        <p className="subtext">Last 30 Days <span className="green">+5%</span></p>
-
+          <div className="analytics-card">
+            <div className="card-top">
+              <div className="adherence-info">
+                <h4 className="card-subtitle">Medication Adherence</h4>
+                <p className="percent">85%</p>
+              </div>
+              <div className="badge-success">
+                <span>+5%</span>
+              </div>
+            </div>
+            <p className="subtext">Last 30 Days</p>
         {/* Line chart placeholder */}
-        <div className="chart-placeholder">
+        <div className="chart-container">
           <div className="chart-line"></div>
         </div>
 
@@ -43,33 +68,28 @@ export default function Dashboard() {
       </div>
 
       {/* Prescription History */}
-      <h3 className="section-title">Prescription History</h3>
+      <div className="section">
+          <div className="section-header">
+            <Calendar size={20} />
+            <h3 className="section-title">Prescription History</h3>
+          </div>
 
-      <div className="prescription-list">
-        <div className="prescription-item">
-          <div className="pill-icon">💊</div>
-          <div>
-            <p className="med-name">Medication A</p>
-            <p className="med-date">2025-11-15</p>
+          <div className="prescription-list">
+            {prescriptions.map(med => (
+              <div key={med.id} className="prescription-item">
+                <div className="pill-icon">
+                  <Pill size={24} />
+                </div>
+                <div className="med-info">
+                  <p className="med-name">{med.name}</p>
+                  <p className="med-date">{med.date}</p>
+                </div>
+                <div className="arrow-icon">›</div>
+              </div>
+            ))}
           </div>
         </div>
-
-        <div className="prescription-item">
-          <div className="pill-icon">💊</div>
-          <div>
-            <p className="med-name">Medication B</p>
-            <p className="med-date">2025-10-20</p>
-          </div>
         </div>
-
-        <div className="prescription-item">
-          <div className="pill-icon">💊</div>
-          <div>
-            <p className="med-name">Medication C</p>
-            <p className="med-date">2025-10-25</p>
-          </div>
-        </div>
-      </div>
 
       <BottomNav />
     </div>

@@ -37,7 +37,7 @@
 .prescription-card {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 15px;
   background-color: #18241F;
   padding: 14px;
@@ -139,6 +139,21 @@
   color: white;
   cursor: pointer;
 }
+.action-icons {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.download-icon {
+  cursor: pointer;
+  color: #2563eb;
+}
+
+.download-icon:hover {
+  color: #1e40af;
+}
+
 
 .delete-icon{
   align-items: end;
