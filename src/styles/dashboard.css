@@ -97,7 +97,8 @@
         .section-title {
           font-size: 18px;
           font-weight: 600;
-          margin-bottom: 25px;
+          padding-top: 12px;
+          /* padding-bottom: 12px; */
           color: #e1e7e4;
         }
 
@@ -191,7 +192,7 @@
           display: flex;
           align-items: center;
           gap: 16px;
-          background: linear-gradient(135deg, rgba(18, 26, 23, 0.8) 0%, rgba(15, 21, 18, 0.9) 100%);
+          background: linear-gradient(135deg, #121a17cc 0%, rgba(15, 21, 18, 0.9) 100%);
           border: 1px solid #1f2924;
           padding: 16px;
           border-radius: 16px;
@@ -240,6 +241,79 @@
           font-size: 20px;
           flex-shrink: 0;
         }
+        /* ===============================
+   Stats Grid (3 Column Layout)
+================================ */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* col1 col2 col3 */
+  gap: 16px;
+  margin: 20px 0;
+}
+
+/* Individual Stat Card */
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px;
+  border-radius: 14px;
+  background: #121a17cc;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+}
+
+/* Icons */
+.stat-card svg {
+  width: 34px;
+  height: 34px;
+}
+
+/* Text */
+.stat-card h4 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #475569;
+  margin-bottom: 4px;
+}
+
+.stat-value {
+  font-size: 1.6rem;
+  font-weight: 700;
+ color: #2563eb;
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+/* Color Variants */
+.stat-card.primary svg {
+  color: #2563eb;
+}
+
+.stat-card.success svg {
+  color: #16a34a;
+}
+
+.stat-card.warning svg {
+  color: #f59e0b;
+}
+
+/* ===============================
+   Responsive (Mobile Friendly)
+================================ */
+@media (max-width: 768px) {
+  .stats-grid {
+    grid-template-columns: 1fr; /* stack vertically */
+  }
+}
 
        
         /* Responsive Design */

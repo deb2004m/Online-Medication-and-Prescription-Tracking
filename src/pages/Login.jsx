@@ -23,64 +23,64 @@ export default function LoginPage() {
   //Auth Mode
   const [isSignup, setIsSignup] = useState(false);
 
-  // ---------------- GOOGLE LOGIN SETUP ----------------
-  useEffect(() => {
-    const script = document.createElement("script");
-    script.src = "https://accounts.google.com/gsi/client";
-    script.async = true;
-    script.defer = true;
-    document.body.appendChild(script);
+  // // ---------------- GOOGLE LOGIN SETUP ----------------
+  // useEffect(() => {
+  //   const script = document.createElement("script");
+  //   script.src = "https://accounts.google.com/gsi/client";
+  //   script.async = true;
+  //   script.defer = true;
+  //   document.body.appendChild(script);
 
-    script.onload = () => {
-      /* global google */
-      google.accounts.id.initialize({
-        client_id:
-        "YOUR GOOGLE_CLIENT_ID_HERE",
-        callback: handleGoogleResponse,
-      });
+  //   script.onload = () => {
+  //     /* global google */
+  //     google.accounts.id.initialize({
+  //       client_id:
+  //         "851169078304-i5p4bm4pn2ebjgki9r86l0hqcsus6644.apps.googleusercontent.com",
+  //       callback: handleGoogleResponse,
+  //     });
 
-      google.accounts.id.renderButton(
-        document.getElementById("googleLoginBtn"),
-        {
-          theme: "outline",
-          size: "large",
-          width: "100%",
-        }
-      );
-    };
+  //     google.accounts.id.renderButton(
+  //       document.getElementById("googleLoginBtn"),
+  //       {
+  //         theme: "outline",
+  //         size: "large",
+  //         width: "100%",
+  //       }
+  //     );
+  //   };
 
-    return () => {
-      if (document.body.contains(script)) {
-        document.body.removeChild(script);
-      }
-    };
-  }, []);
+  //   return () => {
+  //     if (document.body.contains(script)) {
+  //       document.body.removeChild(script);
+  //     }
+  //   };
+  // }, []);
 
-  // ---------------- HANDLE GOOGLE LOGIN ----------------
-  const handleGoogleResponse = (response) => {
-    const userData = decodeJwt(response.credential);
+  // // ---------------- HANDLE GOOGLE LOGIN ----------------
+  // const handleGoogleResponse = (response) => {
+  //   const userData = decodeJwt(response.credential);
 
-    const user = {
-      name: userData.name,
-      email: userData.email,
-      role: "patient",
-    };
+  //   const user = {
+  //     name: userData.name,
+  //     email: userData.email,
+  //     role: "patient",
+  //   };
 
-    login(response.credential);
-    navigate("/prescriptions");
-  };
+  //   login(response.credential);
+  //   navigate("/prescriptions");
+  // };
 
-  function decodeJwt(token) {
-    const base64 = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
-    return JSON.parse(
-      decodeURIComponent(
-        atob(base64)
-          .split("")
-          .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
-          .join("")
-      )
-    );
-  }
+  // function decodeJwt(token) {
+  //   const base64 = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
+  //   return JSON.parse(
+  //     decodeURIComponent(
+  //       atob(base64)
+  //         .split("")
+  //         .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+  //         .join("")
+  //     )
+  //   );
+  // }
 
 
   // ---------------- NORMAL LOGIN (REAL BACKEND) ----------------
@@ -113,14 +113,16 @@ const handleAuth = async () => {
 
     login(token);
 
-    // localStorage.setItem("token", token);
+    localStorage.setItem("token", token);
     localStorage.setItem("user", JSON.stringify({ email: userEmail, role: userRole.toLowerCase(), username }));
-    if (userRole === "admin") {
-      navigate("/admin/dashboard");
+    if (userRole === "pharmacist") {
+      navigate("/pharmacist/inventory");
     } else if (userRole === "doctor") {
       navigate("/doctor/dashboard");
-    } else {
+    } else if (userRole === "patient") {
       navigate("/prescriptions");
+    }else {
+      navigate("/admin/dashboard");
     }
 
   } catch (error) {

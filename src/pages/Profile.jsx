@@ -4,7 +4,7 @@ import BottomNav from "../components/BottomNav";
 import { User, Mail, Shield, LogOut, Settings, Bell, Lock, ChevronRight } from "lucide-react";
 import "../styles/profile.css";
 
-export default function ProfilePage() {
+export default function ProfilePage( {showBottomNav = true} ) {
   const navigate = useNavigate();
 
   // Fetch stored user data (from login response)
@@ -118,7 +118,7 @@ export default function ProfilePage() {
         </button>
       </div>
 
-      <BottomNav />
+      {showBottomNav && <BottomNav />}
     </div>
   );
 }

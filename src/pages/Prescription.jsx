@@ -1,230 +1,249 @@
-import { ArrowLeft, Pill, Plus, CheckCircle, Trash2 } from "lucide-react";
+import {
+  ArrowLeft,
+  Pill,
+  Download,
+  Clock,
+  CheckCircle2,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import BottomNav from "../components/BottomNav";
-import "../styles/prescriptions.css";
-import axios from "axios";
 import api from "../api/api";
-import { Download } from "lucide-react";
-
+import "../styles/prescriptions.css";
 
 export default function Prescriptions() {
   const navigate = useNavigate();
 
-  // Active + Past Prescription States
-const [activeList, setActiveList] = useState([]);
-const [pastList, setPastList] = useState([]);
-
-
-  // Add Prescription Form State
-  const [showForm, setShowForm] = useState(false);
-  const [newMed, setNewMed] = useState({ title: "", subtitle: "" });
+  const [activeList, setActiveList] = useState([]);
+  const [pastList, setPastList] = useState([]);
 
   useEffect(() => {
-  fetchPrescriptions();
-}, []);
+    fetchPrescriptions();
+  }, []);
 
-const fetchPrescriptions = async () => {
-  try {
-    const res = await api.get("/api/patient/prescriptions");
-    // Example: split by status
-    setActiveList(res.data.filter(p => p.status === "ACTIVE"));
-    setPastList(res.data.filter(p => p.status === "COMPLETED"));
-
-  } catch (err) {
-    console.error("Error fetching prescriptions", err);
-  }
-};
-
-  // Add new prescription to Active List
-const addPrescription = async () => {
-  if (!newMed.title.trim()) return;
-
-  try {
-    const payload = {
-      patientId: selectedPatientId, // IMPORTANT
-      name: newMed.title,
-      dosages: newMed.subtitle,
-      duration: "5 days",
-      instruction: "After food"
-    };
-
-    await api.post("/api/doctor/prescription", payload);
-
-    fetchPrescriptions(); // reload list
-    setNewMed({ title: "", subtitle: "" });
-    setShowForm(false);
-  } catch (err) {
-    console.error("Error adding prescription", err);
-  }
-};
-
-
-  // Move item from Active → Past
-  const markAsCompleted = async (prescriptionId) => {
+  const fetchPrescriptions = async () => {
     try {
-      await api.put(
-        `/api/patient/prescriptions/${prescriptionId}/complete`
-      );
-      fetchPrescriptions();
-    
+      const res = await api.get("/api/patient/prescriptions");
 
-    setPastList([...pastList, { ...prescription, status: "COMPLETED"}]);     // Add to past
-    setActiveList(activeList.filter(p => p.prescriptionId !== prescriptionId)); // Remove from active
+      const data = res.data || [];
+
+      // ✅ ACTIVE = ISSUED / ACTIVE
+      setActiveList(
+        data.filter(
+          (p) =>
+            p.status &&
+            ["ISSUED", "ACTIVE"].includes(p.status.toUpperCase())
+        )
+      );
+
+      // ✅ PAST = COMPLETED
+      setPastList(
+        data.filter(
+          (p) =>
+            p.status &&
+            p.status.toUpperCase() === "COMPLETED"
+        )
+      );
+    } catch (err) {
+      console.error("Fetch prescriptions error", err);
+    }
+  };
+const markAsCompleted = async (prescription) => {
+  const id = prescription.prescriptionId || prescription.id;
+  if (!id) return;
+
+  try {
+    await api.put(
+      `/api/patient/prescriptions/${id}/complete`
+    );
+
+    // remove from active
+    setActiveList((prev) =>
+      prev.filter(
+        (p) =>
+          (p.prescriptionId || p.id) !== id
+      )
+    );
+
+    // add to past
+    setPastList((prev) => [
+      { ...prescription, status: "COMPLETED" },
+      ...prev,
+    ]);
   } catch (err) {
-    console.error("Error marking prescription as completed", err);
+    console.error("Mark completed failed", err);
   }
 };
-
-  const deletePastPrescription = async (prescriptionId) => {
-    await axios.delete(`http://localhost:8080/prescriptions/${prescriptionId}`);
-    setPastList(pastList.filter((p => p.id !== prescriptionId)));
-  };
 
   const downloadPdf = async (id) => {
-  const res = await api.get(
-    `/api/patient/prescriptions/${id}/download/pdf`,
-    { responseType: "blob" }
-  );
+    if (!id) return;
 
-  const url = window.URL.createObjectURL(new Blob([res.data]));
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "prescription.pdf";
-  a.click();
-};
+    try {
+      const res = await api.get(
+        `/api/patient/prescriptions/${id}/download/pdf`,
+        { responseType: "blob" }
+      );
 
-// const downloadTxt = async (id) => {
-//   const res = await api.get(
-//     `/api/patient/prescriptions/${id}/download/txt`,
-//     { responseType: "blob" }
-//   );
-
-//   const url = window.URL.createObjectURL(new Blob([res.data]));
-//   const a = document.createElement("a");
-//   a.href = url;
-//   a.download = "prescription.txt";
-//   a.click();
-// };
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "prescription.pdf";
+      a.click();
+    } catch (err) {
+      console.error("PDF download failed", err);
+    }
+  };
 
   return (
     <div className="prescription-page">
-      {/* Header */}
-      <div className="header">
-        <ArrowLeft className="back-icon" size={22} onClick={() => navigate(-1)} />
-        <h2 className="header-title">Prescriptions</h2>
-      </div>
-
-      {/* ACTIVE PRESCRIPTIONS */}
-      <h3 className="section-title">Active Prescriptions</h3>
-
-      <div className="card-list">
-        {activeList.map((item) => (
-          <div key={item.prescriptionId} className="prescription-card">
-            <div className="icon-box">
-              <Pill className="icon-green" size={22} />
-            </div>
-
-            <div className="text-box">
-              <h4 className="title">{item.name}</h4>
-              <p className="subtitle">{item.dosages}</p>
-              <p className="subtitle">{item.instruction}</p>
-            </div>
-            <div className="action-icons">
-              {/* DOWNLOAD PDF */}
-              <Download
-                size={22}
-                className="download-icon"
-                onClick={() => downloadPdf(item.prescriptionId)}
-              />
-
-            {/* ✔ Button */}
-            {item.status === "ACTIVE" && (
-            <CheckCircle
-              className="done-icon"
-              size={24}
-              onClick={() => markAsCompleted(item.prescriptionId)}
-            />
-            )}
-            {item.status === "COMPLETED" && (
-              <span className="completed-text">Completed</span>
-            )}
-
-          </div>
-          </div>
-        ))}
-      </div>
-
-      {/* PAST PRESCRIPTIONS */}
-      <h3 className="section-title">Past Prescriptions</h3>
-
-      <div className="card-list">
-        {pastList.map((item, idx) => (
-          <div key={idx} className="prescription-card past-card">
-            <div className="icon-box">
-              <Pill className="icon-green" size={22} />
-            </div>
-
-            <div className="text-box">
-              <h4 className="title">{item.name}</h4>
-              <p className="subtitle">{item.dosages}</p>
-            </div>
-
-            <Download
-              size={22}
-              className="download-icon"
-              onClick={() => downloadPdf(item.prescriptionId)}
-            />
-
-                        {/* 🗑 Delete icon */}
-            <Trash2
-              className="delete-icon"
-              size={22}
-              onClick={() => deletePastPrescription(idx)}
-            />
-          </div>
-        ))}
-      </div>
-
-      {/* Floating Add Button */}
-      <button className="add-btn" onClick={() => setShowForm(true)}>
-        <Plus size={26} />
-      </button>
-
-      {/* Add Prescription Popup */}
-      {showForm && (
-        <div className="popup-overlay">
-          <div className="popup-box">
-            <h3 className="popup-title">Add New Prescription</h3>
-
-            <input
-              className="popup-input"
-              placeholder="Medicine Name"
-              value={newMed.title}
-              onChange={(e) =>
-                setNewMed({ ...newMed, title: e.target.value })
-              }
-            />
-
-            <input
-              className="popup-input"
-              placeholder="Dosage (e.g., 200mg)"
-              value={newMed.subtitle}
-              onChange={(e) =>
-                setNewMed({ ...newMed, subtitle: e.target.value })
-              }
-            />
-
-            <button className="popup-btn" onClick={addPrescription}>
-              Add Prescription
-            </button>
-
-            <button className="popup-cancel" onClick={() => setShowForm(false)}>
-              Cancel
-            </button>
-          </div>
+      {/* HEADER */}
+      <header className="prescription-header">
+        <div className="prescription-header-content">
+          <button className="back-button" onClick={() => navigate(-1)}>
+            <ArrowLeft size={22} />
+          </button>
+          <h1 className="header-title">Prescriptions</h1>
         </div>
-      )}
+      </header>
+
+      <main className="prescription-main">
+        {/* 🔹 ACTIVE PRESCRIPTIONS */}
+        <section className="prescription-section">
+          <div className="section-header">
+            <Clock size={18} />
+            <h2 className="section-title">Active Prescriptions</h2>
+          </div>
+
+          {activeList.length === 0 ? (
+            <div className="empty-state">
+              <Pill size={40} />
+              <p className="empty-text">No active prescriptions</p>
+            </div>
+          ) : (
+<div className="prescription-cards">
+  {activeList.map((p) => (
+    <div
+      key={p.prescriptionId || p.id}
+      className="prescription-card"
+    >
+      {/* Left green bar */}
+      <div className="active-indicator" />
+
+      <div className="card-content">
+        {/* Icon */}
+        <div className="icon-box">
+          <Pill size={22} />
+        </div>
+
+        {/* Text */}
+        <div className="text-content">
+          <h3 className="medicine-name">
+            {p.name || p.medicineName}
+          </h3>
+
+          <p className="dosage-text">
+            {p.dosages || p.dosage}
+          </p>
+
+          {p.instruction && (
+            <p className="instruction-text">
+              {p.instruction}
+            </p>
+          )}
+
+          <span className="status-badge active">
+            <span className="pulse-dot" />
+            Active
+          </span>
+        </div>
+
+        {/* Download */}
+        <div style={{ display: "flex", gap: "0.5rem" }}>
+  <button
+    className="download-button"
+    onClick={() =>
+      downloadPdf(p.prescriptionId || p.id)
+    }
+  >
+    <Download size={18} />
+  </button>
+
+  <button
+    className="download-button"
+    onClick={() => markAsCompleted(p)}
+    title="Mark as completed"
+  >
+    <CheckCircle2 size={18} />
+  </button>
+</div>
+      </div>
+    </div>
+  ))}
+</div>
+
+          )}
+        </section>
+
+        {/* 🔹 PAST PRESCRIPTIONS */}
+        <section className="prescription-section">
+          <div className="section-header past">
+            <CheckCircle2 size={18} />
+            <h2 className="section-title past">Past Prescriptions</h2>
+          </div>
+
+          {pastList.length === 0 ? (
+            <div className="empty-state">
+              <Pill size={40} />
+              <p className="empty-text">No completed prescriptions</p>
+            </div>
+          ) : (
+            <div className="prescription-cards">
+              {pastList.map((p) => (
+                <div
+                  key={p.prescriptionId || p.id}
+                  className="prescription-card past"
+                >
+                  <div className="card-content">
+                    <div className="icon-box past">
+                      <Pill size={24} />
+                    </div>
+
+                    <div className="text-content">
+                      <h3 className="medicine-name">
+                        {p.name || p.medicineName}
+                      </h3>
+
+                      <p className="dosage-text">
+                        {p.dosages || p.dosage}
+                      </p>
+
+                      {p.instruction && (
+                        <p className="instruction-text">
+                          {p.instruction}
+                        </p>
+                      )}
+
+                      <span className="status-badge completed">
+                        <CheckCircle2 size={12} />
+                        Completed
+                      </span>
+                    </div>
+
+                    <button
+                      className="download-button"
+                      onClick={() =>
+                        downloadPdf(p.prescriptionId || p.id)
+                      }
+                    >
+                      <Download size={18} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+      </main>
 
       <BottomNav />
     </div>

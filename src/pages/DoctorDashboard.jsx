@@ -1,8 +1,9 @@
 import { useState } from "react";
 import axios from "axios";
+import DoctorAnalytics from "./DoctorAnalytics";
 import "../styles/DoctorDashboard.css";
-import { Bot } from "lucide-react";
-import BottomNav from "../components/BottomNav";
+import Profile from "./Profile";
+
 
 export default function DoctorDashboard() {
   const [prescriptions, setPrescriptions] = useState([]);
@@ -16,7 +17,7 @@ export default function DoctorDashboard() {
   });
 
   const token = localStorage.getItem("token");
-
+  
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -72,7 +73,7 @@ export default function DoctorDashboard() {
     <div className="doc-dashboard-container">
       {/* Sidebar Navigation */}
       <aside className="sidebar">
-        <div className="logo">DocPanel</div>
+        <div className="logo">Doctor Dashboard</div>
         <nav className="nav-menu">
           <button 
             className={`nav-item ${activeTab === "issue" ? "active" : ""}`}
@@ -89,13 +90,29 @@ export default function DoctorDashboard() {
           >
             Track Prescription
           </button>
+           <button className="nav-item ${activeTab === 'analytics' ? 'active' : ''}" 
+            onClick={() => setActiveTab("analytics")}> Analytics 
+          </button>
+          <button
+            className={`nav-item ${activeTab === "profile" ? "active" : ""}`}
+            onClick={() => setActiveTab("profile")}
+          >
+            Profile
+          </button>
+         
+
         </nav>
       </aside>
 
       {/* Main Area */}
       <main className="main-content">
         <header className="dashboard-header">
-          <h1>{activeTab === "issue" ? "New Prescription" : "Prescription History"}</h1>
+          <h1>
+            {activeTab === "issue" && "New Prescription"}
+            {activeTab === "track" && "Prescription History"}
+            {activeTab === "profile" && "My Profile"}
+            {activeTab === "analytics" && "Analytics"}
+          </h1>
         </header>
 
         {activeTab === "issue" ? (
@@ -158,7 +175,9 @@ export default function DoctorDashboard() {
               </button>
             </div>
           </div>
-        ) : (
+        ) : null}
+
+        {activeTab === "track" && (
           <div className="doctor-card">
             <table className="track-table">
               <thead>
@@ -184,6 +203,7 @@ export default function DoctorDashboard() {
                       <td>{p.name}</td>
                       <td>{p.dosages}</td>
                       <td>{p.duration}</td>
+                      <td>{p.status}</td>
                     </tr>
                   ))
                 )}
@@ -191,6 +211,20 @@ export default function DoctorDashboard() {
             </table>
           </div>
         )}
+        {activeTab === "profile" && (
+          <div className="doctor-card">
+            <Profile showBottomNav={false} />
+          </div>
+        )}
+          {activeTab === "analytics" && (
+            <div className="doctor-card">
+              <DoctorAnalytics />
+            </div>
+          )}
+        
+     
+
+
       </main>
 
     </div>

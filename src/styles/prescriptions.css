@@ -1,160 +1,326 @@
-/* Full page background */
+
 .prescription-page {
-  background-color: #0F1512;
   min-height: 100vh;
-  padding: 20px;
-  padding-bottom: 100px; /* space for bottom nav */
-  color: white;
+  background-color: #0F1512;
+  padding-bottom: 6rem;
 }
 
 /* Header */
-.header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 25px;
+.prescription-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background-color: rgba(15, 21, 18, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(52, 211, 153, 0.1);
 }
 
-.back-icon {
-  color: #d1d5db;
+.prescription-header-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+}
+
+.back-button {
+  padding: 0.5rem;
+  margin-left: -0.5rem;
+  border-radius: 0.75rem;
+  background: transparent;
+  border: none;
   cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.back-button:hover {
+  background-color: rgba(52, 211, 153, 0.1);
+}
+
+.back-button svg {
+  color: #e5e7eb;
 }
 
 .header-title {
-  font-size: 20px;
+  font-size: 1.25rem;
   font-weight: 600;
+  color: #f3f4f6;
+  margin: 0;
 }
 
-/* Section title */
-.section-title {
+/* Main Content */
+.prescription-main {
+  padding: 1.5rem 1.25rem;
+}
+
+/* Section */
+.prescription-section {
+  margin-bottom: 2rem;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.section-header svg {
   color: #34d399;
-  font-size: 18px;
-  font-weight: bold;
-  margin: 20px 0 12px;
+}
+
+.section-header.past svg {
+  color: #6b7280;
+}
+
+.section-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #34d399;
+  margin: 0;
+}
+
+.section-title.past {
+  color: #6b7280;
+}
+
+/* Empty State */
+.empty-state {
+  background-color: rgba(26, 43, 35, 0.5);
+  border-radius: 1rem;
+  padding: 2rem;
+  text-align: center;
+  border: 1px solid rgba(52, 211, 153, 0.1);
+}
+
+.empty-state svg {
+  color: rgba(107, 114, 128, 0.5);
+  margin-bottom: 0.75rem;
+}
+
+.empty-text {
+  color: #6b7280;
+  margin: 0;
+}
+
+/* Prescription Cards Container */
+.prescription-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 /* Prescription Card */
 .prescription-card {
+  position: relative;
+  background: linear-gradient(135deg, #1a2b23 0%, #18241F 100%);
+  border-radius: 1rem;
+  padding: 1.25rem;
+  border: 1px solid rgba(52, 211, 153, 0.15);
+  transition: all 0.3s ease;
+}
+
+.prescription-card:hover {
+  border-color: rgba(52, 211, 153, 0.3);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3),
+              0 0 20px -5px rgba(52, 211, 153, 0.1);
+  transform: translateY(-2px);
+}
+
+.prescription-card.past {
+  background: linear-gradient(135deg, #1a1f1c 0%, #151a17 100%);
+  border-color: rgba(107, 114, 128, 0.2);
+}
+
+.prescription-card.past:hover {
+  border-color: rgba(107, 114, 128, 0.3);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+}
+
+/* Active Indicator */
+.active-indicator {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 3rem;
+  background: linear-gradient(180deg, #34d399 0%, #10b981 100%);
+  border-radius: 0 4px 4px 0;
+}
+
+/* Card Content */
+.card-content {
   display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 15px;
-  background-color: #18241F;
-  padding: 14px;
-  border-radius: 16px;
-  margin-bottom: 15px;
-  box-shadow: 0px 2px 5px rgba(0,0,0,0.25);
+  align-items: flex-start;
+  gap: 1rem;
 }
 
 /* Icon Box */
 .icon-box {
-  background-color: #233029;
-  padding: 10px;
-  border-radius: 14px;
+  flex-shrink: 0;
+  padding: 0.75rem;
+  background-color: rgba(52, 211, 153, 0.1);
+  border-radius: 0.75rem;
 }
 
-.icon-green {
+.icon-box svg {
   color: #34d399;
 }
 
-/* Text box */
-.title {
-  font-size: 16px;
-  font-weight: 600;
-  color: white;
+.icon-box.past {
+  background-color: rgba(107, 114, 128, 0.15);
 }
 
-.subtitle {
-  font-size: 13px;
+.icon-box.past svg {
+  color: #6b7280;
+}
+
+/* Text Content */
+.text-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.medicine-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #f3f4f6;
+  margin: 0 0 0.25rem 0;
+}
+
+.prescription-card.past .medicine-name {
+  color: rgba(243, 244, 246, 0.7);
+}
+
+.dosage-text {
+  font-size: 0.875rem;
+  color: #9ca3af;
+  margin: 0 0 0.5rem 0;
+}
+
+.instruction-text {
+  font-size: 0.75rem;
+  color: rgba(156, 163, 175, 0.7);
+  margin: 0;
+}
+
+/* Status Badge */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  margin-top: 0.75rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.status-badge.active {
+  background-color: rgba(52, 211, 153, 0.15);
+  color: #34d399;
+}
+
+.status-badge.completed {
+  background-color: rgba(107, 114, 128, 0.2);
   color: #9ca3af;
 }
-/* Add Button */
-.add-btn {
-  position: fixed;
-  bottom: 85px;
-  right: 20px;
-  width: 55px;
-  height: 55px;
-  border: none;
+
+.pulse-dot {
+  width: 6px;
+  height: 6px;
+  background-color: #34d399;
   border-radius: 50%;
-  background: #34d399;
-  color: black;
-  font-weight: bold;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-  cursor: pointer;
+  animation: pulse 2s infinite;
 }
-/* Popup */
-.popup-overlay {
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Download Button */
+.download-button {
+  flex-shrink: 0;
+  padding: 0.625rem;
+  border-radius: 0.75rem;
+  background-color: rgba(52, 211, 153, 0.1);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.download-button svg {
+  color: #6b7280;
+  transition: color 0.2s ease;
+}
+
+.download-button:hover {
+  background-color: rgba(52, 211, 153, 0.2);
+}
+
+.download-button:hover svg {
+  color: #34d399;
+}
+
+.prescription-card.past .download-button {
+  background-color: rgba(107, 114, 128, 0.1);
+}
+
+.prescription-card.past .download-button:hover {
+  background-color: rgba(107, 114, 128, 0.2);
+}
+
+/* Bottom Navigation */
+.bottom-nav {
   position: fixed;
-  top: 0;
+  bottom: 0;
   left: 0;
   right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.65);
+  background-color: rgba(26, 43, 35, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(52, 211, 153, 0.1);
+  padding: 0.75rem 1rem;
+  z-index: 50;
+}
+
+.nav-container {
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
   align-items: center;
+  max-width: 28rem;
+  margin: 0 auto;
 }
 
-.popup-box {
-  background: #18241f;
-  padding: 20px;
-  border-radius: 14px;
-  width: 85%;
-}
-
-.popup-title {
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 15px;
-}
-
-.popup-input {
-  width: 100%;
-  padding: 12px;
-  border-radius: 10px;
-  margin-bottom: 12px;
-  background: #233029;
-  color: white;
-  border: none;
-}
-
-.popup-btn {
-  width: 100%;
-  padding: 12px;
-  border-radius: 10px;
-  background: #34d399;
-  border: none;
-  color: black;
-  font-weight: bold;
-  margin-bottom: 10px;
-  cursor: pointer;
-}
-.popup-cancel {
-  width: 100%;
-  padding: 12px;
-  border-radius: 10px;
-  background: #444;
-  border: none;
-  color: white;
-  cursor: pointer;
-}
-.action-icons {
+.nav-button {
   display: flex;
-  gap: 10px;
+  flex-direction: column;
   align-items: center;
-}
-
-.download-icon {
+  gap: 0.25rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.75rem;
+  background: transparent;
+  border: none;
   cursor: pointer;
-  color: #2563eb;
+  transition: all 0.3s ease;
+  color: #6b7280;
 }
 
-.download-icon:hover {
-  color: #1e40af;
+.nav-button:hover {
+  color: #d1d5db;
 }
 
+.nav-button.active {
+  color: #34d399;
+}
 
-.delete-icon{
-  align-items: end;
+.nav-label {
+  font-size: 0.75rem;
+  font-weight: 500;
 }

@@ -7,24 +7,41 @@ import "../styles/reminders.css";
 export default function Reminders() {
   const navigate = useNavigate();
 
+  const patientId = localStorage.getItem("userId");
   // Form Inputs
   const [medName, setMedName] = useState("");
-  const [dosage, setDosage] = useState("");
   const [frequency, setFrequency] = useState("");
   const [time, setTime] = useState("");
   const [date, setDate] = useState("");
-
+  const [medSearch, setMedSearch] = useState("");
   // Dropdown State for Notification
   const [notifOpen, setNotifOpen] = useState(false);
   const [selectedNotif, setSelectedNotif] = useState("Notification Type");
-
+  const [showDropdown, setShowDropdown] = useState(false);
   const notificationOptions = [
     "Alarm",
-    "Vibration",
-    "Sound",
-    "Silent",
     "Push Notification",
   ];
+    /* ------------------ STORAGE HELPERS ------------------ */
+    const STORAGE_KEY = patientId ? `reminders_${patientId}`: null;
+   
+    const loadReminders = () => {
+    const data = localStorage.getItem(STORAGE_KEY);
+    return data ? JSON.parse(data) : [];
+  };
+    
+  const MEDICINES = [
+  "Paracetamol",
+  "Crocin",
+  "Azithromycin",
+  "Amoxicillin",
+  "Cetirizine",
+  "Dolo 650",
+  "Metformin",
+  "Aspirin",
+];
+
+
   const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   const [editIndex, setEditIndex] = useState(null);
   const [editData, setEditData] = useState(null);
@@ -34,28 +51,79 @@ export default function Reminders() {
     setNotifOpen(false);
   };
   // Saved Reminders List
-  const [savedList, setSavedList] = useState(() => {
-    const saved = localStorage.getItem("reminders");
-    return saved ? JSON.parse(saved) : [];
-  });
+  const [savedList, setSavedList] = useState(loadReminders());
 
-  useEffect(() => {
-    const stored = localStorage.setItem("reminders", JSON.stringify(savedList));
-    if(stored) {
-      const reminders = JSON.parse(stored);
-      setSavedList(reminders);
-      reminders.forEach(item => {
-        if(item.enabled) {
-          // Schedule notification
-          scheduleNotification(item);
+  const saveReminder = async () => {
+  const res = await fetch("http://localhost:8080/api/patient/reminders", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("token")}`
+    },
+    body: JSON.stringify({
+      patientId: patientId,
+      medicineName: selectedMedicine.name,
+      reminderDate: reminderDate,
+      reminderTime: reminderTime
+    })
+  });
+      if (!res.ok) {
+      alert("Failed to save reminder");
+      return;
+    }
+
+    alert("Reminder saved successfully");
+
+    setMedName("");
+    setFrequency("");
+    setDate("");
+    setTime("");
+    setSelectedNotif("Notification Type");
+};
+
+
+
+
+useEffect(() => {
+    if (!patientId) {
+    console.warn("Patient ID not found in localStorage");
+    return;
+  }
+  if (!("Notification" in window)) return;
+
+  const interval = setInterval(async () => {
+    try {
+      const res = await fetch(
+        `http://localhost:8080/api/patient/alerts/${patientId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         }
+      );
+
+      if (!res.ok) return;
+
+      const message = await res.text();
+      if (!message) return;
+
+      const registration = await navigator.serviceWorker.ready;
+
+      registration.showNotification("Medication Reminder 💊", {
+        body: message,
+        icon: "/pill.png",
+        vibrate: [200, 100, 200],
       });
+
+    } catch (err) {
+      console.error("Alert check failed", err);
     }
-    if("Notification" in window) {
-      Notification.requestPermission();
-    }
-        
-  }, []);
+  }, 30000); // every 30 sec (better than 60)
+
+  return () => clearInterval(interval);
+}, [patientId]);
+
+
   const formatTime = (time24) => {
     if (!time24) return "";
     const [hours, minutes] = time24.split(":");
@@ -64,41 +132,19 @@ export default function Reminders() {
     const hour12 = h % 12 || 12;
     return `${hour12}:${minutes} ${suffix}`;
 };
+
+    
   // Save Handler
   const handleSave = () => {
-    if (!medName || !dosage || !frequency || !time || !date || selectedNotif === "Notification Type") {
+    if (!medName || !frequency || !time || !date || selectedNotif === "Notification Type") {
       alert("Please fill all fields");
       return;
     }
-    const scheduleNotification = (item) => {
-      if (Notification.permission !== "granted") return;
-
-      const reminderTime = new Date(`${item.date}T${item.time}`).getTime();
-      const delay = reminderTime - Date.now();
-
-      if (delay <= 0) return;
-
-  setTimeout(async () => {
-    const registration = await navigator.serviceWorker.ready;
-
-    registration.showNotification("Time to take your medication!", {
-      body: `${item.medName} - Take ${item.dosage}`,
-      icon: "/pill.png",
-      badge: "/pill.png",
-      vibrate: [200, 100, 200],
-      actions: [
-        { action: "snooze", title: "Snooze" },
-        { action: "take", title: "Take Now" }
-      ],
-      data: item
-    });
-  }, delay);
-};
-
 
     const newItem = {
+      id: Date.now(),
+      patientId,
       medName,
-      dosage,
       frequency,
       time,
       date,
@@ -107,25 +153,19 @@ export default function Reminders() {
       enabled: true,
     };
 
-    setSavedList(prev => {
-      const updated = [newItem, ...prev];
-      saveToLocalStorage(updated);
-      scheduleNotification(newItem);
-      return updated;
-    });
-      
+    const updated = [newItem, ...savedList];
+    setSavedList(updated);
+    saveReminders(updated);
+
 
     // Reset fields
     setMedName("");
-    setDosage("");
     setFrequency("");
     setTime("");
     setDate("");
     setSelectedNotif("Notification Type");
   };
-  const saveToLocalStorage = (list) => {
-    localStorage.setItem("reminders", JSON.stringify(list));
-  }
+
 
   return (
     <div className="reminder-page">
@@ -145,7 +185,7 @@ export default function Reminders() {
 
       {/* TOP */}
       <div className="reminder-top">
-        <h4 className="med-title">{item.medName}</h4>
+        <h4 className="med-title">Medicine: {item.medName}</h4>
         <label className="switch">
           <input
             type="checkbox"
@@ -155,7 +195,7 @@ export default function Reminders() {
               updated[index].enabled = !updated[index].enabled;
 
               setSavedList(updated);
-              saveToLocalStorage(updated);
+              saveReminders(updated);
             }}
           />
           <span className="slider"></span>
@@ -164,11 +204,12 @@ export default function Reminders() {
 
       {/* MIDDLE */}
       <p className="reminder-info">
-        {formatTime(item.time)} – Take {item.dosage}
+        Time:
+        {formatTime(item.time)} 
       </p>
 
       <div className="pill-row">
-        <span className="pill">{item.frequency}</span>
+        <span className="pill">Frequency taken:{item.frequency}</span>
         <span className={`status ${item.enabled ? "on" : "off"}`}>
           {item.enabled ? "ON" : "OFF"}
         </span>
@@ -192,7 +233,7 @@ export default function Reminders() {
           onClick={() =>{
             const updated = savedList.filter((_, i) => i !== index);
             setSavedList(updated);
-            saveToLocalStorage(updated);
+            saveReminders(updated);
           }}
         >
           Delete
@@ -208,21 +249,50 @@ export default function Reminders() {
       <h3 className="section-heading">Add Medication</h3>
 
       {/* Input Fields */}
-      <input
-        type="text"
-        className="reminder-input"
-        placeholder="Medication Name"
-        value={medName}
-        onChange={(e) => setMedName(e.target.value)}
-      />
+<div className="medicine-autocomplete">
+  <input
+    type="text"
+    className="reminder-input"
+    placeholder="Enter medicine name"
+    value={medName}
+    onChange={(e) => {
+      setMedName(e.target.value);
+      setShowDropdown(true);
+    }}
+    onFocus={() => setShowDropdown(true)}
+    onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
+  />
 
-      <input
-        type="text"
-        className="reminder-input"
-        placeholder="Dosage (e.g., 200mg)"
-        value={dosage}
-        onChange={(e) => setDosage(e.target.value)}
-      />
+  {showDropdown && (
+    <div className="dropdown-list">
+      {MEDICINES.filter(med =>
+        med.toLowerCase().includes(medName.toLowerCase())
+      ).map((med) => (
+        <div
+          key={med}
+          className="dropdown-item"
+          onClick={() => {
+            setMedName(med);
+            setShowDropdown(false);
+          }}
+        >
+          {med}
+        </div>
+      ))}
+
+      {/* When no match */}
+      {MEDICINES.filter(med =>
+        med.toLowerCase().includes(medName.toLowerCase())
+      ).length === 0 && (
+        <div className="dropdown-item no-match">
+          No suggestions — you can add manually
+        </div>
+      )}
+    </div>
+  )}
+</div>
+
+
 
       {/* Frequency Field */}
       <input
